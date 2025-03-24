@@ -66,6 +66,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.0.4(@types/react@19.0.12)
+      daisyui:
+        specifier: ^5.0.9
+        version: 5.0.9
       eslint:
         specifier: ^9.23.0
         version: 9.23.0(jiti@2.4.2)
@@ -827,6 +830,9 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  daisyui@5.0.9:
+    resolution: {integrity: sha512-RsaehHh45f+0shWgZZaOY09/8eOae2voRsqJCD71j9yrnYgcke0Nj5ys0ZxrW4SPcc4+q96kWyJu0Z8P1zZdoA==}
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -2653,6 +2659,8 @@ snapshots:
       which: 2.0.2
 
   csstype@3.1.3: {}
+
+  daisyui@5.0.9: {}
 
   damerau-levenshtein@1.0.8: {}
 
