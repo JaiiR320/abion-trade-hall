@@ -22,6 +22,7 @@ model SellOrder {
     user   User   @relation(fields: [userId], references: [id])
     userId String
 
+    itemDisplayName String
     itemName String
     itemPrice Int
     itemQuantity Int
@@ -64,6 +65,13 @@ model User {
     accounts      Account[]
     sessions      Session[]
     sellOrders    SellOrder[]
+}
+
+model Item {
+    index Int @id
+    uniqueName String @unique
+    displayName String
+    icon String
 }
 
 model VerificationToken {

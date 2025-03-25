@@ -8,19 +8,25 @@ export async function Navbar() {
   }
   return (
     <div className="navbar bg-primary text-primary-content">
-      <div className="flex-1 flex flex-row pl-5 pr-5 justify-between text-3xl font-bold">
-        <Link href="/">
+      <div className="flex flex-1 flex-row justify-between pr-5 pl-5 text-3xl font-bold">
+        <Link href="/" className="btn btn-ghost text-3xl">
           Albion Trade Hall
         </Link>
-        {session?.user.name ?  ( 
-        <div className="w-10 rounded-full">
-          <img src={session?.user.image ?? ""} alt="user" />
-        </div> 
-        ) : (
-          <Link href="/api/auth/signin">
-            Login
+        <div className="flex flex-row gap-2">
+          <Link href="/sell" className="btn btn-accent">
+            Sell
           </Link>
-        )}        
+          <Link href="/search" className="btn btn-accent">
+            Search
+          </Link>
+          {session?.user.name ? (
+            <Link href="/profile" className="w-10 rounded-full">
+              <img src={session?.user.image ?? ""} alt="user" />
+            </Link>
+          ) : (
+            <Link href="/api/auth/signin">Login</Link>
+          )}
+        </div>
       </div>
     </div>
   );

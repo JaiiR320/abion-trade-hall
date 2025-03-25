@@ -1,7 +1,7 @@
 import { auth } from "@/server/auth";
 import { api, HydrateClient } from "@/trpc/server";
 import { SellOrder } from "./_components/sellOrder";
-import Link from "next/link";
+import { SellOrderForm } from "./_components/sellOrderForm";
 
 export default async function Home() {
   const session = await auth();
@@ -12,11 +12,13 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-base-100 text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          {session?.user && <SellOrder />}
+      <main className="flex min-h-screen flex-col items-center bg-base-300 text-white">
+        <div className="container flex flex-col items-center gap-12 px-4 py-16">
+          <SellOrder/>
+          {session?.user && <SellOrderForm />}
         </div>
       </main>
     </HydrateClient>
   );
 }
+

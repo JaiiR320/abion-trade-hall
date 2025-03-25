@@ -1,56 +1,34 @@
 "use client"
-
 import { api } from "@/trpc/react";
+import { Listing } from "./listing";
+import { useState } from "react";
 
 export function SellOrder() {
   const { data: sellOrders } = api.sellOrder.get.useQuery();
+  const [search, setSearch] = useState("");
 
+  const filteredSellOrders = sellOrders?.filter((sellOrder) => {
+    return sellOrder.itemDisplayName.toLowerCase().includes(search.toLowerCase())
+  });
+  
   return (
-    <div>
-      <h1>Sell Orders</h1>
-      <SellOrderForm />
-      <ul>
-        {sellOrders?.map(sellOrder => (
-          <li key={sellOrder.id}>
-            <p>{sellOrder.itemName}</p>
-            <p>{sellOrder.itemPrice}</p>
-            <p>{sellOrder.itemQuantity}</p>
-          </li>
+    <div className="flex w-4xl flex-col gap-4">
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold">Sell Orders</h1>
+        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} className="input input-bordered w-full max-w-xs" placeholder="Search" />
+      </div>
+      <ul className="list bg-base-100 rounded-box shadow-md">
+        <li className="list-row">
+          <div></div>
+          <div>Item</div>
+          <div>Quantity</div>
+          <div>Price</div>
+          <div>Message</div>
+        </li>
+        {filteredSellOrders?.map((sellOrder) => (
+          <Listing key={sellOrder.id} sellOrder={sellOrder} />
         ))}
       </ul>
     </div>
-  )
-}
-
-function SellOrderForm() {
-  const utils = api.useUtils();
-  const { mutate: createSellOrder } = api.sellOrder.create.useMutation({
-    onSuccess: () => {
-      utils.sellOrder.invalidate();
-    },
-  });
-
-  return (
-    <form onSubmit={e => {
-      e.preventDefault();
-      const formData = new FormData(e.target as HTMLFormElement);
-      const itemName = formData.get("itemName");
-      const itemPrice = formData.get("itemPrice");
-      const itemQuantity = formData.get("itemQuantity");
-
-      if (typeof itemName === "string" && typeof itemPrice === "string" && typeof itemQuantity === "string") {  
-        createSellOrder({
-          itemName,
-          itemPrice: parseInt(itemPrice),
-          itemQuantity: parseInt(itemQuantity),
-        });
-      }
-    }}
-    >
-      <input type="text" placeholder="Item Name" name="itemName" className="w-full rounded-full bg-white/10 px-4 py-2 text-white border border-white" />
-      <input type="number" placeholder="Item Price" name="itemPrice" className="w-full rounded-full bg-white/10 px-4 py-2 text-white border border-white" />
-      <input type="number" placeholder="Item Quantity" name="itemQuantity" className="w-full rounded-full bg-white/10 px-4 py-2 text-white border border-white" />
-      <button type="submit" className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20 border border-white">Create</button>
-    </form>
-  )
+  );
 }
