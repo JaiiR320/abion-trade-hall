@@ -1,5 +1,6 @@
 import { auth } from "@/server/auth";
 import Link from "next/link";
+import Image from "next/image";
 
 export async function Navbar() {
   const session = await auth();
@@ -21,7 +22,7 @@ export async function Navbar() {
           </Link>
           {session?.user.name ? (
             <Link href="/profile" className="w-10 rounded-full">
-              <img src={session?.user.image ?? ""} alt="user" />
+              <Image src={session?.user.image ?? ""} alt="user" />
             </Link>
           ) : (
             <Link href="/api/auth/signin">Login</Link>

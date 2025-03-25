@@ -17,12 +17,12 @@ type Item = {
   } | null;
   LocalizedDescription: {
     "EN-US": string;
-  }
-}
+  };
+};
 
 async function main() {
   const items = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), 'public', 'items.json'), 'utf-8')
+    fs.readFileSync(path.join(process.cwd(), "public", "items.json"), "utf-8"),
   ) as Item[];
 
   await prisma.item.deleteMany();

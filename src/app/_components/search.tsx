@@ -5,8 +5,8 @@ import { useState } from "react";
 
 export function SearchPage() {
   const [search, setSearch] = useState("");
-  const [tier, setTier] = useState<string | "any">("any");
-  const [enchant, setEnchant] = useState<string | "any">("any");
+  const [tier, setTier] = useState<string>("any");
+  const [enchant, setEnchant] = useState<string>("any");
   const { data, isLoading } = api.sellOrder.getFuzzy.useQuery({
     search: search,
     tier: tier,

@@ -1,14 +1,15 @@
-import { HydrateClient } from "@/trpc/server"
+import { HydrateClient } from "@/trpc/server";
+import Link from "next/link";
 
-export function ProfilePage() {
+function ProfilePage() {
   return (
     <div>
       <h1>Profile</h1>
-      <a href="/api/auth/signout" className="btn btn-error">
+      <Link href="/api/auth/signout" className="btn btn-error">
         Logout
-      </a>
+      </Link>
     </div>
-  )
+  );
 }
 
 export default async function Profile() {
@@ -16,5 +17,5 @@ export default async function Profile() {
     <HydrateClient>
       <ProfilePage />
     </HydrateClient>
-  )   
+  );
 }

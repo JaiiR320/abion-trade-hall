@@ -12,13 +12,12 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center bg-base-300 text-white">
+      <main className="bg-base-300 flex min-h-screen flex-col items-center text-white">
         <div className="container flex flex-col items-center gap-12 px-4 py-16">
-          <SellOrder/>
+          <SellOrder />
           {session?.user && <SellOrderForm />}
         </div>
       </main>
     </HydrateClient>
   );
 }
-

@@ -6,6 +6,25 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 
+// Define the type for a single condition
+type SellOrderWhereCondition = {
+  itemDisplayName?: {
+    contains: string;
+    mode: "insensitive";
+  };
+  itemName?: {
+    startsWith?: string;
+    contains?: string;
+  };
+};
+
+// Define the type for the complete where clause
+type SellOrderWhereInput =
+  | {
+      AND: SellOrderWhereCondition[];
+    }
+  | Record<string, never>; // empty object type for when no conditions
+
 export const sellOrderRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
     const sellOrders = await ctx.db.sellOrder.findMany({
@@ -17,87 +36,93 @@ export const sellOrderRouter = createTRPCRouter({
     return sellOrders;
   }),
 
-  getFuzzy: publicProcedure.input(z.object({
-    search: z.string(),
-    tier: z.string(),
-    enchant: z.string(),
-  })).query(async ({ ctx, input }) => {
-    const { search, tier, enchant } = input;
-    console.log(tier, enchant);
+  getFuzzy: publicProcedure
+    .input(
+      z.object({
+        search: z.string(),
+        tier: z.string(),
+        enchant: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { search, tier, enchant } = input;
 
-    // Build the where clause conditionally
-    const conditions = [];
+      const conditions: SellOrderWhereCondition[] = [];
 
-    // Only add search filter if search string is not empty
-    if (search.trim() !== '') {
-      conditions.push({
-        itemDisplayName: { 
-          contains: search, 
-          mode: "insensitive" 
-        }
-      });
-    }
-
-    // Only add tier filter if tier is valid and not "any"
-    if (tier !== "any") {
-      conditions.push({
-        itemName: {
-          startsWith: `T${tier}_`
-        }
-      });
-    }
-
-    // Only add enchant filter if enchant is valid and not "any"
-    if (enchant !== "any") {
-      conditions.push({
-        itemName: {
-          contains: `@${enchant}`
-        }
-      });
-    }
-
-    const sellOrders = await ctx.db.sellOrder.findMany({
-      where: conditions.length > 0 ? { AND: conditions as any } : {},
-      orderBy: {
-        itemPrice: "asc",
-      },
-      take: 10,
-      include: {
-        user: {
-          select: {
-            name: true,
-          }
-        }
+      if (search.trim() !== "") {
+        conditions.push({
+          itemDisplayName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        });
       }
-    });
 
-    return sellOrders;
-  }),
+      if (tier !== "any") {
+        conditions.push({
+          itemName: {
+            startsWith: `T${tier}_`,
+          },
+        });
+      }
 
-  create: protectedProcedure.input(z.object({
-    itemName: z.string(),
-    itemPrice: z.number(),
-    itemQuantity: z.number(),
-  })).mutation(async ({ ctx, input }) => {
-    const { itemName, itemPrice, itemQuantity } = input;
-    const item = await ctx.db.item.findUnique({
-      where: {
-        uniqueName: itemName,
-      },
-    });
+      if (enchant !== "any") {
+        conditions.push({
+          itemName: {
+            contains: `@${enchant}`,
+          },
+        });
+      }
 
-    if (!item) {
-      throw new Error("Item not found");
-    }
+      const where: SellOrderWhereInput =
+        conditions.length > 0 ? { AND: conditions } : {};
 
-    return ctx.db.sellOrder.create({
-      data: {
-        itemDisplayName: item.displayName,
-        itemName,
-        itemPrice,
-        itemQuantity,
-        userId: ctx.session.user.id,
-      },
-    });
-  }),
+      const sellOrders = await ctx.db.sellOrder.findMany({
+        where,
+        orderBy: {
+          itemPrice: "asc",
+        },
+        take: 10,
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+
+      return sellOrders;
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        itemName: z.string(),
+        itemPrice: z.number(),
+        itemQuantity: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { itemName, itemPrice, itemQuantity } = input;
+      const item = await ctx.db.item.findUnique({
+        where: {
+          uniqueName: itemName,
+        },
+      });
+
+      if (!item) {
+        throw new Error("Item not found");
+      }
+
+      return ctx.db.sellOrder.create({
+        data: {
+          itemDisplayName: item.displayName,
+          itemName,
+          itemPrice,
+          itemQuantity,
+          userId: ctx.session.user.id,
+        },
+      });
+    }),
 });
